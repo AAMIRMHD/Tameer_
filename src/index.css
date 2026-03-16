@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-ivory text-ink font-sans antialiased;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+::selection {
+  background: rgba(203, 168, 92, 0.25);
+}
+
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.25));
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(18px);
+}
+
+.section-title {
+  @apply font-display text-3xl md:text-4xl tracking-tight;
+}
+
+.section-subtitle {
+  @apply text-sm uppercase tracking-[0.3em] text-gold-500 font-medium;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.break-inside-avoid {
+  break-inside: avoid;
+}
+
+.square-thumb {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.marquee {
+  overflow: hidden;
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.ig-card {
+  display: block;
+  height: 180px;
+  width: 180px;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 50px rgba(13, 16, 24, 0.12);
+}
+
+.ig-card img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.ig-card:hover img {
+  transform: scale(1.06);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.dark body {
+  background: #0b0f19;
+  color: #f5f7fb;
+}
+
+.dark .bg-white {
+  background-color: #0f1524 !important;
+}
+
+.dark .bg-ivory {
+  background-color: #0b0f19 !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500 {
+  color: #b9c0d4 !important;
+}
+
+.dark .glass {
+  background: linear-gradient(135deg, rgba(12, 16, 28, 0.85), rgba(12, 16, 28, 0.4));
+  border-color: rgba(255, 255, 255, 0.08);
+}
