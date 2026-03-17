@@ -144,26 +144,6 @@ const sectionMotion = {
   show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: 'easeOut' } }
 };
 
-function LoadingScreen() {
-  return (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ivory"
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.6, ease: 'easeInOut' } }}
-    >
-      <motion.div
-        className="flex flex-col items-center gap-4"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="h-10 w-10 rounded-full border border-gold-300 border-t-gold-700 animate-spin" />
-        <p className="text-xs uppercase tracking-[0.4em] text-gold-700">Preparing the experience</p>
-      </motion.div>
-    </motion.div>
-  );
-}
-
 function AnimatedCounter({ value, label }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -252,13 +232,18 @@ function Navbar({ activeSection }) {
             <a
               key={link.href}
               href={link.href}
-              className={`transition ${
+              className={`relative pb-2 transition ${
                 activeSection === link.href
                   ? 'text-ink'
                   : 'text-slate-600 hover:text-ink'
               }`}
             >
               {link.label}
+              <span
+                className={`absolute left-0 -bottom-1 h-[2px] w-full origin-left rounded-full bg-gold-500 transition-transform transform ${
+                  activeSection === link.href ? 'scale-x-100' : 'scale-x-0'
+                }`}
+              />
             </a>
           ))}
         </div>
@@ -988,27 +973,9 @@ function Footer() {
   );
 }
 
-function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
-  return (
-    <motion.div
-      className="fixed left-0 top-0 z-50 h-[3px] w-full origin-left bg-gold-500"
-      style={{ scaleX }}
-    />
-  );
-}
-
 export default function App() {
-  const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('#home');
   const lenisRef = useRef(null);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 1300);
-    return () => clearTimeout(timeout);
-  }, []);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -1043,15 +1010,16 @@ export default function App() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(`#${entry.target.id}`);
-          }
-        });
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (!visible.length) return;
+        const mostVisible = visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (mostVisible?.target?.id) {
+          setActiveSection(`#${mostVisible.target.id}`);
+        }
       },
       {
-        rootMargin: '-40% 0px -50% 0px',
-        threshold: 0.1
+        rootMargin: '-30% 0px -60% 0px',
+        threshold: [0.1, 0.25, 0.5, 0.75]
       }
     );
 
@@ -1062,8 +1030,6 @@ export default function App() {
 
   return (
     <div className="bg-ivory text-ink">
-      <ScrollProgress />
-      <AnimatePresence>{loading && <LoadingScreen />}</AnimatePresence>
       <Navbar activeSection={activeSection} />
       <main>
         <Hero />
